@@ -83,7 +83,7 @@ func (m *SqlxMigrate) Rollback() error {
 }
 
 func (m *SqlxMigrate) createMigrationTable() error {
-	_, err := m.db.Exec("CREATE TABLE IF NOT EXISTS migrations (id TEXT PRIMARY KEY )")
+	_, err := m.db.Exec("CREATE TABLE IF NOT EXISTS migrations (id VARCHAR(63) PRIMARY KEY )")
 	if err != nil {
 		return fmt.Errorf("creating migrations table: %w", err)
 	}
