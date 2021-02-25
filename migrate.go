@@ -31,7 +31,7 @@ func (m *SqlxMigrate) Migrate() error {
 
 	for _, migration := range m.migrations {
 		var found string
-		err := m.db.Get(&found, "SELECT id FROM migrations WHERE id=$1", migration.ID)
+		err := m.db.Get(&found, "SELECT id FROM migrations WHERE id=?", migration.ID)
 		switch err {
 		case sql.ErrNoRows:
 			log.Printf("Running migration: %v\n", migration.ID)
@@ -63,7 +63,7 @@ func (m *SqlxMigrate) Rollback() error {
 			continue
 		}
 		var found string
-		err := m.db.Get(&found, "SELECT id FROM migrations WHERE id=$1", migration.ID)
+		err := m.db.Get(&found, "SELECT id FROM migrations WHERE id=?", migration.ID)
 		switch err {
 		case sql.ErrNoRows:
 			log.Printf("Skipping rollback: %v\n", migration.ID)
@@ -97,7 +97,7 @@ func (m *SqlxMigrate) runMigration(migration Migration) error {
 	if err != nil {
 		return errorf(err)
 	}
-	_, err = tx.Exec("INSERT INTO migrations (id) VALUES ($1)", migration.ID)
+	_, err = tx.Exec("INSERT INTO migrations (id) VALUES (?)", migration.ID)
 	if err != nil {
 		tx.Rollback()
 		return errorf(err)
@@ -121,7 +121,7 @@ func (m *SqlxMigrate) runRollback(migration Migration) error {
 	if err != nil {
 		return errorf(err)
 	}
-	_, err = tx.Exec("DELETE FROM migrations WHERE id=$1", migration.ID)
+	_, err = tx.Exec("DELETE FROM migrations WHERE id=?", migration.ID)
 	if err != nil {
 		tx.Rollback()
 		return errorf(err)

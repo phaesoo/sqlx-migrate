@@ -72,7 +72,7 @@ func TestSqlx(t *testing.T) {
 		if err := migrator.Migrate(); err != nil {
 			t.Fatalf("Migrate() err = %v; want nil", err)
 		}
-		if _, err := db.Exec("INSERT INTO courses (name) VALUES ($1) ", "cor_test"); err != nil {
+		if _, err := db.Exec("INSERT INTO courses (name) VALUES (?) ", "cor_test"); err != nil {
 		}
 	})
 
@@ -90,7 +90,7 @@ func TestSqlx(t *testing.T) {
 		err := migrator.Migrate()
 		assert.NoError(t, err, "Migrate() err = %v; want nil")
 
-		_, err = db.Exec("INSERT INTO courses (name) VALUES ($1) ", "cor_test")
+		_, err = db.Exec("INSERT INTO courses (name) VALUES (?) ", "cor_test")
 		assert.NoError(t, err, "db.Exec() err = %v; want nil")
 
 		// the real test
@@ -111,7 +111,7 @@ func TestSqlx(t *testing.T) {
 
 		err = newMigrator.Migrate()
 		assert.NoError(t, err, "Migrate() err = %v; want nil")
-		_, err = db.Exec("INSERT INTO users (email) VALUES ($1) ", "abc@test.com")
+		_, err = db.Exec("INSERT INTO users (email) VALUES (?) ", "abc@test.com")
 		assert.NoError(t, err, "db.Exec() err = %v; want nil")
 	})
 
@@ -129,7 +129,7 @@ func TestSqlx(t *testing.T) {
 		err := migrator.Migrate()
 		assert.NoError(t, err, "Migrate() err = %v; want nil")
 
-		_, err = db.Exec("INSERT INTO courses (name) VALUES ($1) ", "cor_test")
+		_, err = db.Exec("INSERT INTO courses (name) VALUES (?) ", "cor_test")
 		assert.NoError(t, err, "db.Exec() err = %v; want nil")
 
 		err = migrator.Rollback()
@@ -143,7 +143,7 @@ func TestSqlx(t *testing.T) {
 		err = migrator.Migrate()
 		assert.NoError(t, err, "Migrate() err = %v; want nil", err)
 
-		_, err = db.Exec("INSERT INTO courses (name) VALUES ($1) ", "cor_test")
+		_, err = db.Exec("INSERT INTO courses (name) VALUES (?) ", "cor_test")
 		assert.NoError(t, err, "db.Exec() err = %v; want nil", err)
 
 		err = db.QueryRow("SELECT COUNT(*) FROM courses;").Scan(&count)
