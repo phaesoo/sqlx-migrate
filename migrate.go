@@ -8,6 +8,11 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+var supportedDrivers = map[string]bool{
+	"sqlite3": true,
+	"mysql":   true,
+}
+
 // SqlxMigrate is a migrator that uses github.com/jmoiron/sqlx
 type SqlxMigrate struct {
 	db         *sqlx.DB
@@ -15,11 +20,15 @@ type SqlxMigrate struct {
 }
 
 // New creates a SqlxMigrate instance
-func New(db *sqlx.DB, migrations []Migration) *SqlxMigrate {
+func New(db *sqlx.DB, migrations []Migration) (*SqlxMigrate, error) {
+	if _, ok := supportedDrivers[db.DriverName()]; !ok {
+		return nil, fmt.Errorf("Unsupported driver name: %s", db.DriverName())
+	}
+
 	return &SqlxMigrate{
 		db:         db,
 		migrations: migrations,
-	}
+	}, nil
 }
 
 // Migrate will run the migrations using the provided db connection.

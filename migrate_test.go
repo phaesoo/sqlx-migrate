@@ -67,7 +67,8 @@ func TestSqlx(t *testing.T) {
 			Rollback: nil,
 		}
 
-		migrator := New(db, []Migration{migration})
+		migrator, err := New(db, []Migration{migration})
+		assert.NoError(t, err)
 
 		if err := migrator.Migrate(); err != nil {
 			t.Fatalf("Migrate() err = %v; want nil", err)
@@ -85,16 +86,17 @@ func TestSqlx(t *testing.T) {
 			Migrate:  migrateFunc1,
 			Rollback: nil,
 		}
-		migrator := New(db, []Migration{migration})
+		migrator, err := New(db, []Migration{migration})
+		assert.NoError(t, err)
 
-		err := migrator.Migrate()
+		err = migrator.Migrate()
 		assert.NoError(t, err, "Migrate() err = %v; want nil")
 
 		_, err = db.Exec("INSERT INTO courses (name) VALUES (?) ", "cor_test")
 		assert.NoError(t, err, "db.Exec() err = %v; want nil")
 
 		// the real test
-		newMigrator := New(db, []Migration{
+		newMigrator, err := New(db, []Migration{
 			{
 				ID:       "1",
 				Name:     "001_create_courses",
@@ -108,6 +110,7 @@ func TestSqlx(t *testing.T) {
 				Rollback: nil,
 			},
 		})
+		assert.NoError(t, err)
 
 		err = newMigrator.Migrate()
 		assert.NoError(t, err, "Migrate() err = %v; want nil")
@@ -124,9 +127,10 @@ func TestSqlx(t *testing.T) {
 			Migrate:  migrateFunc1,
 			Rollback: rollbackFunc1,
 		}
-		migrator := New(db, []Migration{migration})
+		migrator, err := New(db, []Migration{migration})
+		assert.NoError(t, err)
 
-		err := migrator.Migrate()
+		err = migrator.Migrate()
 		assert.NoError(t, err, "Migrate() err = %v; want nil")
 
 		_, err = db.Exec("INSERT INTO courses (name) VALUES (?) ", "cor_test")
